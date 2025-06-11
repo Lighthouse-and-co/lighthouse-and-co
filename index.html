@@ -294,7 +294,7 @@
         .modal-input:focus,
         .modal-textarea:focus {
             outline: none;
-            border-color: #9ca3af;
+            border-color: #9ca3af; /* Accent color on focus */
             box-shadow: 0 0 8px rgba(156, 163, 175, 0.3);
         }
 
@@ -449,6 +449,9 @@
 
         function openModal(optionText) {
             currentPurchaseOption = optionText; // Store the selected option
+            
+            // Always reset form fields when trying to open modal
+            document.getElementById('expeditionForm').reset();
 
             if (optionText === 'Special Freebies') {
                 const enteredCode = specialCodeInput.value.trim();
@@ -457,20 +460,17 @@
                 if (enteredCode === requiredCode) {
                     currentSpecialCode = enteredCode; // Store the correct code
                     modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
-                    expeditionModal.style.display = 'flex'; // Open modal
-                    // Optional: Reset form fields when opening modal
-                    document.getElementById('expeditionForm').reset();
+                    expeditionModal.style.display = 'flex'; // ONLY open modal if code is correct
                 } else {
                     alert('Incorrect code. Please enter the correct code to redeem your freebie.');
-                    return; // Stop the function if code is incorrect
+                    expeditionModal.style.display = 'none'; // Ensure modal is hidden if code is incorrect
+                    return; // Stop the function here, do not proceed to open modal
                 }
             } else {
                 // For paid options, no code validation needed
                 currentSpecialCode = ''; // Clear code for other options
                 modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
-                expeditionModal.style.display = 'flex'; // Open modal
-                // Optional: Reset form fields when opening modal
-                document.getElementById('expeditionForm').reset();
+                expeditionModal.style.display = 'flex'; // Open modal for paid options
             }
         }
 
@@ -530,7 +530,7 @@
             
             cards.forEach((card, index) => {
                 card.style.animationDelay = `${index * 0.2}s`;
-                card.style.animation = 'fadeInUp 0.8s ease forwards';
+                card.style.animation = 'fadeInUp 0.8s ease forwards`;
             });
         });
 
