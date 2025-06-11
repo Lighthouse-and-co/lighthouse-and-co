@@ -387,14 +387,14 @@
                 <h3 class="card-title">Single Photo Edit</h3>
                 <div class="card-price">$1</div>
                 <p class="card-description">Get your single photo professionally edited with color correction, retouching, and enhancement to make it picture-perfect.</p>
-                <button class="btn" onclick="openModal('single')">Upload Photo</button>
+                <button class="btn" onclick="openModal('Single Photo Edit')">Upload Photo</button>
             </div>
 
             <div class="pricing-card">
                 <h3 class="card-title">Bulk Photo Edit</h3>
                 <div class="card-price">$4</div>
                 <p class="card-description">Submit 5 or more photos for professional editing. Perfect for events, portfolios, or batch photo enhancement with consistent styling.</p>
-                <button class="btn" onclick="openModal('bulk')">Upload Photos</button>
+                <button class="btn" onclick="openModal('Bulk Photo Edit')">Upload Photos</button>
             </div>
 
             <div class="pricing-card special-card">
@@ -403,7 +403,7 @@
                 <p class="card-description">Exclusive free editing services for special clients. Enter your access code to unlock complimentary photo editing.</p>
                 <input type="text" class="code-input" placeholder="Enter your access code" id="specialCode">
                 <br>
-                <button class="btn" onclick="openModal('special')">Redeem Code</button>
+                <button class="btn" onclick="openModal('Special Freebies')">Redeem Code</button>
             </div>
         </div>
 
@@ -441,69 +441,54 @@
     <div id="expeditionModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button" onclick="closeModal()">&times;</span>
-            <h2 class="modal-title" id="modalHeader"></h2>
+            <h2 class="modal-title"><span id="modalSelectedOption"></span></h2>
 
             <form id="expeditionForm">
                 <div class="form-group">
-                    <label for="captainName">Captain's Name *</label>
-                    <input type="text" id="captainName" class="modal-input" required>
+                    <label for="fullName">Name *</label>
+                    <input type="text" id="fullName" class="modal-input" required placeholder="Your full name">
                 </div>
 
                 <div class="form-group">
-                    <label for="shipCommunication">Ship's Communication *</label>
-                    <input type="text" id="shipCommunication" class="modal-input" required>
+                    <label for="phoneNumber">Phone Number *</label>
+                    <input type="tel" id="phoneNumber" class="modal-input" required placeholder="e.g., +1 (555) 123-4567">
                 </div>
 
                 <div class="form-group">
-                    <label for="signalNumber">Signal Number *</label>
-                    <input type="text" id="signalNumber" class="modal-input" required>
+                    <label for="emailAddress">Email *</label>
+                    <input type="email" id="emailAddress" class="modal-input" required placeholder="your.email@example.com">
                 </div>
 
                 <div class="form-group">
-                    <label for="cargoManifest">Cargo Manifest (Optional)</label>
+                    <label for="fileUpload">Files for Editing (Optional)</label>
                     <div class="file-drop-area" id="dropArea">
-                        <input type="file" id="cargoManifest" multiple>
-                        <p>Drop your cargo here or click to load</p>
+                        <input type="file" id="fileUpload" multiple>
+                        <p>Drop your files here or click to upload</p>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="navigationNotes">Navigation Notes</label>
-                    <textarea id="navigationNotes" class="modal-textarea" rows="4" placeholder="Chart your specific course requirements..."></textarea>
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" class="modal-textarea" rows="4" placeholder="Any specific instructions or requests for the editor..."></textarea>
                 </div>
 
-                <button type="submit" class="modal-btn">Embark on Expedition</button>
+                <button type="submit" class="modal-btn">Submit Order</button>
             </form>
         </div>
     </div>
 
     <script>
         const expeditionModal = document.getElementById('expeditionModal');
-        const modalHeader = document.getElementById('modalHeader');
-        const captainNameInput = document.getElementById('captainName');
-        const shipCommunicationInput = document.getElementById('shipCommunication');
-        const signalNumberInput = document.getElementById('signalNumber');
-        const cargoManifestInput = document.getElementById('cargoManifest');
-        const navigationNotesInput = document.getElementById('navigationNotes');
+        const modalSelectedOption = document.getElementById('modalSelectedOption');
+        const fullNameInput = document.getElementById('fullName');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const emailAddressInput = document.getElementById('emailAddress');
+        const fileUploadInput = document.getElementById('fileUpload');
+        const notesInput = document.getElementById('notes');
         const dropArea = document.getElementById('dropArea');
 
-        function openModal(planType) {
-            let headerText = "Embark on Admiral's Expedition"; // Default text from your screenshot
-
-            switch(planType) {
-                case 'single':
-                    // You can customize the modal header based on the plan type if needed
-                    // headerText = "Embark on Single Photo Mission";
-                    break;
-                case 'bulk':
-                    // headerText = "Embark on Bulk Photo Mission";
-                    break;
-                case 'special':
-                    // headerText = "Embark on Freebie Mission";
-                    break;
-            }
-            
-            modalHeader.textContent = headerText;
+        function openModal(optionText) {
+            modalSelectedOption.textContent = `Purchase: ${optionText}`;
             expeditionModal.style.display = 'flex'; // Use flex to center the modal content
         }
 
@@ -511,6 +496,8 @@
             expeditionModal.style.display = 'none';
             // Optional: Clear form fields when closing
             document.getElementById('expeditionForm').reset();
+            // Reset file drop area text
+            dropArea.querySelector('p').textContent = 'Drop your files here or click to upload';
         }
 
         // Close modal when clicking outside of it
@@ -520,7 +507,7 @@
             }
         }
 
-        // Handle file drop for Cargo Manifest
+        // Handle file drop for Files for Editing
         dropArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropArea.style.borderColor = '#9ca3af';
@@ -534,23 +521,22 @@
             e.preventDefault();
             dropArea.style.borderColor = '#6b7280';
             const files = e.dataTransfer.files;
-            cargoManifestInput.files = files; // Assign dropped files to the input
-            // You can add visual feedback for dropped files here, e.g., display file names
+            fileUploadInput.files = files; // Assign dropped files to the input
             if (files.length > 0) {
-                dropArea.querySelector('p').textContent = `${files.length} file(s) ready to load.`;
+                dropArea.querySelector('p').textContent = `${files.length} file(s) ready to upload.`;
             }
         });
 
-        // Handle click to load for Cargo Manifest
+        // Handle click to load for Files for Editing
         dropArea.addEventListener('click', () => {
-            cargoManifestInput.click();
+            fileUploadInput.click();
         });
 
-        cargoManifestInput.addEventListener('change', () => {
-            if (cargoManifestInput.files.length > 0) {
-                dropArea.querySelector('p').textContent = `${cargoManifestInput.files.length} file(s) selected.`;
+        fileUploadInput.addEventListener('change', () => {
+            if (fileUploadInput.files.length > 0) {
+                dropArea.querySelector('p').textContent = `${fileUploadInput.files.length} file(s) selected.`;
             } else {
-                dropArea.querySelector('p').textContent = 'Drop your cargo here or click to load';
+                dropArea.querySelector('p').textContent = 'Drop your files here or click to upload';
             }
         });
 
@@ -559,17 +545,16 @@
             event.preventDefault(); // Prevent default form submission
 
             const formData = {
-                captainName: captainNameInput.value,
-                shipCommunication: shipCommunicationInput.value,
-                signalNumber: signalNumberInput.value,
-                navigationNotes: navigationNotesInput.value,
-                // For cargoManifest, you would typically send files via FormData in a real application
-                // For this example, we'll just log that files were selected
-                cargoManifestFilesCount: cargoManifestInput.files.length
+                purchaseOption: modalSelectedOption.textContent.replace('Purchase: ', ''),
+                fullName: fullNameInput.value,
+                phoneNumber: phoneNumberInput.value,
+                emailAddress: emailAddressInput.value,
+                notes: notesInput.value,
+                filesCount: fileUploadInput.files.length
             };
 
             console.log('Form Submitted:', formData);
-            alert('Expedition form submitted! (Check console for data)');
+            alert('Your order has been submitted! We will be in touch shortly. (Check console for data)');
             closeModal(); // Close modal after submission
         });
 
