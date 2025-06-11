@@ -448,44 +448,55 @@
         let currentSpecialCode = ''; // To store the code for special freebies
 
         function openModal(optionText) {
-            currentPurchaseOption = optionText; // Store the selected option
+            console.log('openModal called with option:', optionText);
+            currentPurchaseOption = optionText;
             
             // Always reset form fields when trying to open modal
             document.getElementById('expeditionForm').reset();
 
             if (optionText === 'Special Freebies') {
                 const enteredCode = specialCodeInput.value.trim();
-                const requiredCode = '#I\'mAFollower'; // Define the required code
+                const requiredCode = '#I\'mAFollower';
+
+                console.log('Special Freebies option selected.');
+                console.log('Entered Code (trimmed):', enteredCode);
+                console.log('Required Code:', requiredCode);
 
                 if (enteredCode === requiredCode) {
-                    currentSpecialCode = enteredCode; // Store the correct code
+                    console.log('Code is correct. Opening modal.');
+                    currentSpecialCode = enteredCode;
                     modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
-                    expeditionModal.style.display = 'flex'; // ONLY open modal if code is correct
+                    expeditionModal.style.display = 'flex'; // This should open it now!
                 } else {
+                    console.log('Code is incorrect. Not opening modal.');
                     alert('Incorrect code. Please enter the correct code to redeem your freebie.');
-                    expeditionModal.style.display = 'none'; // Ensure modal is hidden if code is incorrect
-                    return; // Stop the function here, do not proceed to open modal
+                    expeditionModal.style.display = 'none'; // Explicitly hide if code is incorrect
+                    return; // Stop the function here
                 }
             } else {
-                // For paid options, no code validation needed
-                currentSpecialCode = ''; // Clear code for other options
+                // For paid options, always open the modal
+                console.log('Paid option selected. Opening modal.');
+                currentSpecialCode = ''; // Clear any leftover code
                 modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
-                expeditionModal.style.display = 'flex'; // Open modal for paid options
+                expeditionModal.style.display = 'flex';
             }
         }
 
         function closeModal() {
+            console.log('closeModal called.');
             expeditionModal.style.display = 'none';
         }
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
             if (event.target == expeditionModal) {
+                console.log('Clicked outside modal, closing.');
                 closeModal();
             }
         }
 
         function sendOrderEmail() {
+            console.log('sendOrderEmail called.');
             const customerName = fullNameInput.value.trim();
             const customerPhone = phoneNumberInput.value.trim();
             const orderNotes = notesInput.value.trim();
@@ -517,6 +528,7 @@
             const encodedSubject = encodeURIComponent(emailSubject);
             const encodedBody = encodeURIComponent(emailBody);
 
+            console.log('Attempting to open mailto link:', `mailto:${recipientEmail}?subject=${encodedSubject}&body=${encodedBody}`);
             window.location.href = `mailto:${recipientEmail}?subject=${encodedSubject}&body=${encodedBody}`;
             
             // Optionally close the modal after attempting to open email client
@@ -530,7 +542,7 @@
             
             cards.forEach((card, index) => {
                 card.style.animationDelay = `${index * 0.2}s`;
-                card.style.animation = 'fadeInUp 0.8s ease forwards`;
+                card.style.animation = 'fadeInUp 0.8s ease forwards';
             });
         });
 
