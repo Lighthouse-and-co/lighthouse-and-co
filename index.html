@@ -16,12 +16,18 @@
             background: linear-gradient(135deg, #1f2937 0%, #374151 25%, #4b5563 50%, #6b7280 75%, #9ca3af 100%);
             min-height: 100vh;
             color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            width: 100%;
         }
 
         header {
@@ -209,6 +215,142 @@
             color: #d1d5db;
         }
 
+        /* Modal specific styles */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #374151; /* Darker background to match the theme */
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #6b7280; /* Border color from your theme */
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .close-button {
+            color: #9ca3af; /* Light grey for close button */
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: white;
+            text-decoration: none;
+        }
+
+        .modal-title {
+            color: #f3f4f6; /* Light text for title */
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d1d5db; /* Light grey for labels */
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .modal-input,
+        .modal-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #6b7280; /* Border color from your theme */
+            border-radius: 8px;
+            background-color: #4b5563; /* Darker background for inputs */
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .modal-input:focus,
+        .modal-textarea:focus {
+            outline: none;
+            border-color: #9ca3af; /* Accent color on focus */
+            box-shadow: 0 0 8px rgba(156, 163, 175, 0.3);
+        }
+
+        .modal-input::placeholder,
+        .modal-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .file-drop-area {
+            border: 2px dashed #6b7280; /* Dashed border matching theme */
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .file-drop-area:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: #9ca3af;
+        }
+
+        .file-drop-area input[type="file"] {
+            display: none;
+        }
+
+        .modal-btn {
+            background: linear-gradient(45deg, #4b5563, #6b7280);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(75, 85, 99, 0.4);
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .modal-btn:hover {
+            background: linear-gradient(45deg, #374151, #4b5563);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(75, 85, 99, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5rem;
@@ -220,6 +362,15 @@
             
             .pricing-card {
                 padding: 30px 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -236,14 +387,14 @@
                 <h3 class="card-title">Single Photo Edit</h3>
                 <div class="card-price">$1</div>
                 <p class="card-description">Get your single photo professionally edited with color correction, retouching, and enhancement to make it picture-perfect.</p>
-                <button class="btn" onclick="selectPlan('single')">Upload Photo</button>
+                <button class="btn" onclick="openModal('single')">Upload Photo</button>
             </div>
 
             <div class="pricing-card">
                 <h3 class="card-title">Bulk Photo Edit</h3>
                 <div class="card-price">$4</div>
                 <p class="card-description">Submit 5 or more photos for professional editing. Perfect for events, portfolios, or batch photo enhancement with consistent styling.</p>
-                <button class="btn" onclick="selectPlan('bulk')">Upload Photos</button>
+                <button class="btn" onclick="openModal('bulk')">Upload Photos</button>
             </div>
 
             <div class="pricing-card special-card">
@@ -252,7 +403,7 @@
                 <p class="card-description">Exclusive free editing services for special clients. Enter your access code to unlock complimentary photo editing.</p>
                 <input type="text" class="code-input" placeholder="Enter your access code" id="specialCode">
                 <br>
-                <button class="btn" onclick="selectPlan('special')">Redeem Code</button>
+                <button class="btn" onclick="openModal('special')">Redeem Code</button>
             </div>
         </div>
 
@@ -287,35 +438,142 @@
         </footer>
     </div>
 
+    <div id="expeditionModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title" id="modalHeader"></h2>
+
+            <form id="expeditionForm">
+                <div class="form-group">
+                    <label for="captainName">Captain's Name *</label>
+                    <input type="text" id="captainName" class="modal-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="shipCommunication">Ship's Communication *</label>
+                    <input type="text" id="shipCommunication" class="modal-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signalNumber">Signal Number *</label>
+                    <input type="text" id="signalNumber" class="modal-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cargoManifest">Cargo Manifest (Optional)</label>
+                    <div class="file-drop-area" id="dropArea">
+                        <input type="file" id="cargoManifest" multiple>
+                        <p>Drop your cargo here or click to load</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="navigationNotes">Navigation Notes</label>
+                    <textarea id="navigationNotes" class="modal-textarea" rows="4" placeholder="Chart your specific course requirements..."></textarea>
+                </div>
+
+                <button type="submit" class="modal-btn">Embark on Expedition</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        function selectPlan(planType) {
-            let message = '';
-            let codeValue = '';
-            
+        const expeditionModal = document.getElementById('expeditionModal');
+        const modalHeader = document.getElementById('modalHeader');
+        const captainNameInput = document.getElementById('captainName');
+        const shipCommunicationInput = document.getElementById('shipCommunication');
+        const signalNumberInput = document.getElementById('signalNumber');
+        const cargoManifestInput = document.getElementById('cargoManifest');
+        const navigationNotesInput = document.getElementById('navigationNotes');
+        const dropArea = document.getElementById('dropArea');
+
+        function openModal(planType) {
+            let headerText = "Embark on Admiral's Expedition"; // Default text from your screenshot
+
             switch(planType) {
                 case 'single':
-                    message = 'Single Photo Edit selected ($1). Please upload your photo for professional editing.';
+                    // You can customize the modal header based on the plan type if needed
+                    // headerText = "Embark on Single Photo Mission";
                     break;
                 case 'bulk':
-                    message = 'Bulk Photo Edit selected ($4 for 5+ photos). Please upload your photos for professional editing.';
+                    // headerText = "Embark on Bulk Photo Mission";
                     break;
                 case 'special':
-                    codeValue = document.getElementById('specialCode').value.trim();
-                    if (codeValue === '') {
-                        alert('Please enter your access code first.');
-                        return;
-                    }
-                    message = `Checking access code: "${codeValue}". Validating free editing offer...`;
+                    // headerText = "Embark on Freebie Mission";
                     break;
             }
             
-            alert(message);
-            
-            // Here you would typically redirect to upload form or payment processor
-            console.log(`Plan selected: ${planType}`, codeValue ? `Code: ${codeValue}` : '');
+            modalHeader.textContent = headerText;
+            expeditionModal.style.display = 'flex'; // Use flex to center the modal content
         }
 
-        // Add interactive animations
+        function closeModal() {
+            expeditionModal.style.display = 'none';
+            // Optional: Clear form fields when closing
+            document.getElementById('expeditionForm').reset();
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == expeditionModal) {
+                closeModal();
+            }
+        }
+
+        // Handle file drop for Cargo Manifest
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#9ca3af';
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = '#6b7280';
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#6b7280';
+            const files = e.dataTransfer.files;
+            cargoManifestInput.files = files; // Assign dropped files to the input
+            // You can add visual feedback for dropped files here, e.g., display file names
+            if (files.length > 0) {
+                dropArea.querySelector('p').textContent = `${files.length} file(s) ready to load.`;
+            }
+        });
+
+        // Handle click to load for Cargo Manifest
+        dropArea.addEventListener('click', () => {
+            cargoManifestInput.click();
+        });
+
+        cargoManifestInput.addEventListener('change', () => {
+            if (cargoManifestInput.files.length > 0) {
+                dropArea.querySelector('p').textContent = `${cargoManifestInput.files.length} file(s) selected.`;
+            } else {
+                dropArea.querySelector('p').textContent = 'Drop your cargo here or click to load';
+            }
+        });
+
+        // Form submission handling (you'll need a backend for this)
+        document.getElementById('expeditionForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = {
+                captainName: captainNameInput.value,
+                shipCommunication: shipCommunicationInput.value,
+                signalNumber: signalNumberInput.value,
+                navigationNotes: navigationNotesInput.value,
+                // For cargoManifest, you would typically send files via FormData in a real application
+                // For this example, we'll just log that files were selected
+                cargoManifestFilesCount: cargoManifestInput.files.length
+            };
+
+            console.log('Form Submitted:', formData);
+            alert('Expedition form submitted! (Check console for data)');
+            closeModal(); // Close modal after submission
+        });
+
+        // Add interactive animations for pricing cards
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.pricing-card');
             
