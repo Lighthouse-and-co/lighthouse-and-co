@@ -302,26 +302,7 @@
         .modal-textarea::placeholder {
             color: rgba(255, 255, 255, 0.6);
         }
-
-        .file-drop-area {
-            border: 2px dashed #6b7280; /* Dashed border matching theme */
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            color: #d1d5db;
-            cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        .file-drop-area:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-color: #9ca3af;
-        }
-
-        .file-drop-area input[type="file"] {
-            display: none;
-        }
-
+        
         .modal-btn {
             background: linear-gradient(45deg, #4b5563, #6b7280);
             color: white;
@@ -387,14 +368,14 @@
                 <h3 class="card-title">Single Photo Edit</h3>
                 <div class="card-price">$1</div>
                 <p class="card-description">Get your single photo professionally edited with color correction, retouching, and enhancement to make it picture-perfect.</p>
-                <button class="btn" onclick="openModal('Single Photo Edit')">Upload Photo</button>
+                <button class="btn" onclick="openModal('Single Photo Edit')">Order Now</button>
             </div>
 
             <div class="pricing-card">
                 <h3 class="card-title">Bulk Photo Edit</h3>
                 <div class="card-price">$4</div>
                 <p class="card-description">Submit 5 or more photos for professional editing. Perfect for events, portfolios, or batch photo enhancement with consistent styling.</p>
-                <button class="btn" onclick="openModal('Bulk Photo Edit')">Upload Photos</button>
+                <button class="btn" onclick="openModal('Bulk Photo Edit')">Order Now</button>
             </div>
 
             <div class="pricing-card special-card">
@@ -445,34 +426,21 @@
 
             <form id="expeditionForm">
                 <div class="form-group">
-                    <label for="fullName">Name *</label>
+                    <label for="fullName">Your Name *</label>
                     <input type="text" id="fullName" class="modal-input" required placeholder="Your full name">
                 </div>
 
                 <div class="form-group">
-                    <label for="phoneNumber">Phone Number *</label>
+                    <label for="phoneNumber">Your Phone Number *</label>
                     <input type="tel" id="phoneNumber" class="modal-input" required placeholder="e.g., +1 (555) 123-4567">
                 </div>
 
                 <div class="form-group">
-                    <label for="emailAddress">Email *</label>
-                    <input type="email" id="emailAddress" class="modal-input" required placeholder="your.email@example.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="fileUpload">Files for Editing (Optional)</label>
-                    <div class="file-drop-area" id="dropArea">
-                        <input type="file" id="fileUpload" multiple>
-                        <p>Drop your files here or click to upload</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Notes</label>
+                    <label for="notes">Notes for Your Order (Optional)</label>
                     <textarea id="notes" class="modal-textarea" rows="4" placeholder="Any specific instructions or requests for the editor..."></textarea>
                 </div>
 
-                <button type="submit" class="modal-btn">Submit Order</button>
+                <button type="button" class="modal-btn" onclick="sendOrderEmail()">Send Email to Complete Order</button>
             </form>
         </div>
     </div>
@@ -482,22 +450,33 @@
         const modalSelectedOption = document.getElementById('modalSelectedOption');
         const fullNameInput = document.getElementById('fullName');
         const phoneNumberInput = document.getElementById('phoneNumber');
-        const emailAddressInput = document.getElementById('emailAddress');
-        const fileUploadInput = document.getElementById('fileUpload');
         const notesInput = document.getElementById('notes');
-        const dropArea = document.getElementById('dropArea');
+        const specialCodeInput = document.getElementById('specialCode'); // Get input from main page
+
+        let currentPurchaseOption = ''; // To store the selected option for email subject
+        let currentSpecialCode = ''; // To store the code for special freebies
 
         function openModal(optionText) {
-            modalSelectedOption.textContent = `Purchase: ${optionText}`;
+            currentPurchaseOption = optionText; // Store the selected option
+            modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
             expeditionModal.style.display = 'flex'; // Use flex to center the modal content
+
+            if (optionText === 'Special Freebies') {
+                currentSpecialCode = specialCodeInput.value.trim();
+                if (!currentSpecialCode) {
+                    alert('Please enter your access code for Special Freebies before proceeding.');
+                    closeModal(); // Close modal if no code
+                    return;
+                }
+            } else {
+                currentSpecialCode = ''; // Clear code for other options
+            }
+            // Optional: Reset form fields when opening modal
+            document.getElementById('expeditionForm').reset();
         }
 
         function closeModal() {
             expeditionModal.style.display = 'none';
-            // Optional: Clear form fields when closing
-            document.getElementById('expeditionForm').reset();
-            // Reset file drop area text
-            dropArea.querySelector('p').textContent = 'Drop your files here or click to upload';
         }
 
         // Close modal when clicking outside of it
@@ -507,56 +486,44 @@
             }
         }
 
-        // Handle file drop for Files for Editing
-        dropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#9ca3af';
-        });
+        function sendOrderEmail() {
+            const customerName = fullNameInput.value.trim();
+            const customerPhone = phoneNumberInput.value.trim();
+            const orderNotes = notesInput.value.trim();
 
-        dropArea.addEventListener('dragleave', () => {
-            dropArea.style.borderColor = '#6b7280';
-        });
-
-        dropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#6b7280';
-            const files = e.dataTransfer.files;
-            fileUploadInput.files = files; // Assign dropped files to the input
-            if (files.length > 0) {
-                dropArea.querySelector('p').textContent = `${files.length} file(s) ready to upload.`;
+            if (!customerName || !customerPhone) {
+                alert('Please fill in your Name and Phone Number to continue.');
+                return;
             }
-        });
 
-        // Handle click to load for Files for Editing
-        dropArea.addEventListener('click', () => {
-            fileUploadInput.click();
-        });
+            const recipientEmail = 'alisa.zelenkin@gmail.com';
+            let emailSubject = `Photo Edit Order: ${currentPurchaseOption}`;
+            let emailBody = `Hello Alisa,\n\nI would like to place an order for the "${currentPurchaseOption}" service.\n\n`;
+            
+            emailBody += `My Name: ${customerName}\n`;
+            emailBody += `My Phone Number: ${customerPhone}\n\n`;
 
-        fileUploadInput.addEventListener('change', () => {
-            if (fileUploadInput.files.length > 0) {
-                dropArea.querySelector('p').textContent = `${fileUploadInput.files.length} file(s) selected.`;
-            } else {
-                dropArea.querySelector('p').textContent = 'Drop your files here or click to upload';
+            if (orderNotes) {
+                emailBody += `Notes for my order:\n${orderNotes}\n\n`;
             }
-        });
 
-        // Form submission handling (you'll need a backend for this)
-        document.getElementById('expeditionForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+            if (currentPurchaseOption === 'Special Freebies' && currentSpecialCode) {
+                emailSubject += ` (Code: ${currentSpecialCode})`;
+                emailBody += `My Special Freebies Access Code: ${currentSpecialCode}\n\n`;
+            }
+            
+            emailBody += "I will attach my photos to this email.\n\nThank you!";
 
-            const formData = {
-                purchaseOption: modalSelectedOption.textContent.replace('Purchase: ', ''),
-                fullName: fullNameInput.value,
-                phoneNumber: phoneNumberInput.value,
-                emailAddress: emailAddressInput.value,
-                notes: notesInput.value,
-                filesCount: fileUploadInput.files.length
-            };
+            // Encode subject and body for URL
+            const encodedSubject = encodeURIComponent(emailSubject);
+            const encodedBody = encodeURIComponent(emailBody);
 
-            console.log('Form Submitted:', formData);
-            alert('Your order has been submitted! We will be in touch shortly. (Check console for data)');
-            closeModal(); // Close modal after submission
-        });
+            window.location.href = `mailto:${recipientEmail}?subject=${encodedSubject}&body=${encodedBody}`;
+            
+            // Optionally close the modal after attempting to open email client
+            closeModal();
+            alert('Your email client should now open. Please attach your photos there and send the email.');
+        }
 
         // Add interactive animations for pricing cards
         document.addEventListener('DOMContentLoaded', function() {
