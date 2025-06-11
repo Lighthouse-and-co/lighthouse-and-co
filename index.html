@@ -294,7 +294,7 @@
         .modal-input:focus,
         .modal-textarea:focus {
             outline: none;
-            border-color: #9ca3af; /* Accent color on focus */
+            border-color: #9ca3af;
             box-shadow: 0 0 8px rgba(156, 163, 175, 0.3);
         }
 
@@ -343,15 +343,6 @@
             
             .pricing-card {
                 padding: 30px 20px;
-            }
-
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-            }
-
-            .modal-title {
-                font-size: 1.5rem;
             }
         }
     </style>
@@ -458,21 +449,29 @@
 
         function openModal(optionText) {
             currentPurchaseOption = optionText; // Store the selected option
-            modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
-            expeditionModal.style.display = 'flex'; // Use flex to center the modal content
 
             if (optionText === 'Special Freebies') {
-                currentSpecialCode = specialCodeInput.value.trim();
-                if (!currentSpecialCode) {
-                    alert('Please enter your access code for Special Freebies before proceeding.');
-                    closeModal(); // Close modal if no code
-                    return;
+                const enteredCode = specialCodeInput.value.trim();
+                const requiredCode = '#I\'mAFollower'; // Define the required code
+
+                if (enteredCode === requiredCode) {
+                    currentSpecialCode = enteredCode; // Store the correct code
+                    modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
+                    expeditionModal.style.display = 'flex'; // Open modal
+                    // Optional: Reset form fields when opening modal
+                    document.getElementById('expeditionForm').reset();
+                } else {
+                    alert('Incorrect code. Please enter the correct code to redeem your freebie.');
+                    return; // Stop the function if code is incorrect
                 }
             } else {
+                // For paid options, no code validation needed
                 currentSpecialCode = ''; // Clear code for other options
+                modalSelectedOption.textContent = `Complete Your Order: ${optionText}`;
+                expeditionModal.style.display = 'flex'; // Open modal
+                // Optional: Reset form fields when opening modal
+                document.getElementById('expeditionForm').reset();
             }
-            // Optional: Reset form fields when opening modal
-            document.getElementById('expeditionForm').reset();
         }
 
         function closeModal() {
